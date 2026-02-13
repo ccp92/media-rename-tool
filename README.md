@@ -7,6 +7,7 @@ A Rust-based CLI tool to mass rename media files for Movies and TV Shows.
 - **Movie Mode (`--movie`)**: Formats files to `Title (Year).ext`.
 - **TV Mode (`--tv`)**: Formats files to `Title SxxExx.ext`.
 - **String Replacement**: Support for finding and replacing specific text using `--replace <FIND> <REPLACE>`.
+- **Recursive Scan**: Use `--recursive` to scan all subdirectories.
 - **Dry Run**: Use `--dry-run` to see what would happen without renaming files.
 - **Cross-Platform**: Works on Windows, macOS, and Linux.
 
@@ -80,3 +81,9 @@ Previews changes without modifying files.
 
 - Command: `media-rename-tool --movie --dry-run`
 - Output: `Dry run: The following files WOULD be renamed...`
+
+#### Recursive Scan
+Scans the current directory and all subdirectories.
+
+- Command: `media-rename-tool --movie --recursive`
+- Note: This will always perform a dry-run first and ask for your confirmation before renaming any files.
