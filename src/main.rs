@@ -64,18 +64,20 @@ fn process_file(
         }
     } else if args.tv {
         if let Some(caps) = re_tv.captures(&filename) {
-            let keep = &caps["keep"];
+            let title = &caps["title"];
+            let season = &caps["season"];
+            let episode = &caps["episode"];
             let ext = &caps["ext"];
 
-            let mut keep = keep.to_string();
+            let mut title = title.to_string();
             if let Some(replace_args) = &args.replace {
                 if replace_args.len() == 2 {
-                    keep = keep.replace(&replace_args[0], &replace_args[1]);
+                    title = title.replace(&replace_args[0], &replace_args[1]);
                 }
             }
-            let keep = keep.replace(".", " ");
+            let title = title.replace(".", " ");
 
-            format!("{}{}", keep.trim(), ext)
+            format!("{} S{}E{}{}", title.trim(), season, episode, ext)
         } else {
             return None;
         }
@@ -110,7 +112,7 @@ fn main() {
     let args = Cli::parse();
 
     let re_movie = Regex::new(r"^(?P<title>.*?)\s*(?P<year>(?:19|20)\d{2}).*(?P<ext>\.[^.]+)$").unwrap();
-    let re_tv = Regex::new(r"^(?P<keep>.*?S\d{2}E\d{2}).*(?P<ext>\.[^.]+)$").unwrap();
+    let re_tv = Regex::new(r"(?i)^(?P<title>.*?)S(?P<season>\d{2})E(?P<episode>\d{2}).*(?P<ext>\.[^.]+)$").unwrap();
 
     let current_dir = std::path::Path::new(".");
     let mut files = Vec::new();
