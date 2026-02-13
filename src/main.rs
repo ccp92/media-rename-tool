@@ -57,7 +57,7 @@ fn main() {
                 let year = &caps["year"];
                 let ext = &caps["ext"];
                 // "strip out any text after a year is found... and wrap the year in partnethesis"
-                format!("{} ({}){}", title.trim(), year, ext)
+                format!("{} ({}){}", title.replace(".", " ").trim(), year, ext)
             } else {
                 continue;
             }
@@ -66,7 +66,7 @@ fn main() {
                 let keep = &caps["keep"];
                 let ext = &caps["ext"];
                  // "strip out all text after a string in the format S01E01 is found"
-                format!("{}{}", keep.trim(), ext)
+                format!("{}{}", keep.replace(".", " ").trim(), ext)
             } else {
                 continue;
             }
