@@ -18,6 +18,10 @@ struct Cli {
     /// Movie mode: strips text after year (19xx-20xx), wraps year in parens
     #[arg(long, group = "mode")]
     movie: bool,
+
+    /// Find and replace: takes two strings, finds the first and replaces with the second
+    #[arg(long, num_args = 2, value_names = ["FIND", "REPLACE"])]
+    replace: Option<Vec<String>>,
 }
 
 fn main() {
@@ -56,8 +60,17 @@ fn main() {
                 let title = &caps["title"];
                 let year = &caps["year"];
                 let ext = &caps["ext"];
+                
+                let mut title = title.to_string();
+                if let Some(replace_args) = &args.replace {
+                    if replace_args.len() == 2 {
+                        title = title.replace(&replace_args[0], &replace_args[1]);
+                    }
+                }
+                let title = title.replace(".", " ");
+
                 // "strip out any text after a year is found... and wrap the year in partnethesis"
-                format!("{} ({}){}", title.replace(".", " ").trim(), year, ext)
+                format!("{} ({}){}", title.trim(), year, ext)
             } else {
                 continue;
             }
@@ -65,8 +78,17 @@ fn main() {
             if let Some(caps) = re_tv.captures(&filename) {
                 let keep = &caps["keep"];
                 let ext = &caps["ext"];
+                
+                let mut keep = keep.to_string();
+                if let Some(replace_args) = &args.replace {
+                     if replace_args.len() == 2 {
+                        keep = keep.replace(&replace_args[0], &replace_args[1]);
+                    }
+                }
+                let keep = keep.replace(".", " ");
+
                  // "strip out all text after a string in the format S01E01 is found"
-                format!("{}{}", keep.replace(".", " ").trim(), ext)
+                format!("{}{}", keep.trim(), ext)
             } else {
                 continue;
             }

@@ -6,6 +6,7 @@ A Rust-based CLI tool to mass rename media files for Movies and TV Shows.
 
 - **Movie Mode (`--movie`)**: Formats files to `Title (Year).ext`.
 - **TV Mode (`--tv`)**: Formats files to `Title SxxExx.ext`.
+- **String Replacement**: Support for finding and replacing specific text using `--replace <FIND> <REPLACE>`.
 - **Cross-Platform**: Works on Windows, macOS, and Linux.
 
 ## Installation
@@ -65,3 +66,10 @@ Renames files by keeping the title and `SxxExx` identifier, removing subsequent 
 - Input: `Schitt's Creek S03E12.720p.WEB-DL.x265-HETeam.mkv`
 - Command: `media-rename-tool --tv`
 - Output: `Schitt's Creek S03E12.mkv`
+
+#### Find & Replace
+Replaces specific text in the filename before formatting.
+
+- Input: `SchittsCreek.S04E10.mkv`
+- Command: `media-rename-tool --tv --replace "SchittsCreek" "Schitt's Creek"`
+- Output: `Schitt's Creek S04E10.mkv`
