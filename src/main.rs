@@ -22,6 +22,10 @@ struct Cli {
     /// Find and replace: takes two strings, finds the first and replaces with the second
     #[arg(long, num_args = 2, value_names = ["FIND", "REPLACE"])]
     replace: Option<Vec<String>>,
+
+    /// Dry run: prints what would happen without renaming files
+    #[arg(long)]
+    dry_run: bool,
 }
 
 fn main() {
@@ -40,6 +44,8 @@ fn main() {
         }
     };
 
+    let mut pending_renames = Vec::new();
+
     for path in paths {
         let path = match path {
             Ok(p) => p.path(),
@@ -51,7 +57,7 @@ fn main() {
         }
 
         let filename = match path.file_name() {
-            Some(f) => f.to_string_lossy(),
+            Some(f) => f.to_string_lossy().into_owned(),
             None => continue,
         };
 
@@ -96,12 +102,29 @@ fn main() {
             continue; 
         };
 
-        if new_filename != filename.as_ref() {
-            let new_path = path.with_file_name(&new_filename);
-            println!("Renaming: '{}' -> '{}'", filename, new_filename);
-            if let Err(e) = fs::rename(&path, &new_path) {
-                eprintln!("Failed to rename '{}': {}", filename, e);
-            }
+        if new_filename != filename {
+            pending_renames.push((path, filename, new_filename));
+        }
+    }
+
+    if pending_renames.is_empty() {
+        println!("No files to rename.");
+        return;
+    }
+
+    if args.dry_run {
+        println!("Dry run: The following files WOULD be renamed:");
+        for (_, old_name, new_name) in &pending_renames {
+            println!("'{}' -> '{}'", old_name, new_name);
+        }
+        return;
+    }
+
+    for (path, old_name, new_name) in pending_renames {
+        let new_path = path.with_file_name(&new_name);
+        println!("Renaming: '{}' -> '{}'", old_name, new_name);
+        if let Err(e) = fs::rename(&path, &new_path) {
+            eprintln!("Failed to rename '{}': {}", old_name, e);
         }
     }
 }
